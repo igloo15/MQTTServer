@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <AssemblyName>Igloo15.MQTTServer.Tool</AssemblyName>
+    <AssemblyTitle>mqttserver</AssemblyTitle>
+    <RootNamespace>Igloo15.MQTTServer.Tool</RootNamespace>
+    <BaseOutputPath>$(MSBuildProjectFullPath)\..\..\..\dist\MQTTServer.Tool</BaseOutputPath>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackAsTool>true</PackAsTool>
+    <OutputType>Exe</OutputType>
+    <ToolCommandName>dotnet-mqttserver</ToolCommandName>
+    <IsPackable>true</IsPackable>
+    <PackageVersion>$(Version)</PackageVersion>
+    <Title>Igloo15.MQTTServer.Tool</Title>
+    <Authors>Igloo15</Authors>
+    <Description>dotnet cli tool used to run a mqtt server</Description>
+    <PackageProjectUrl>https://github.com/igloo15/MQTTServer</PackageProjectUrl>
+    <PackageTags>mqttnet;mqttserver;server;dotnet;cli;tool;netcore</PackageTags>
+    <RepositoryUrl>https://github.com/igloo15/MQTTServer.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <StartupObject>Igloo15.MQTTServer.Tool.Program</StartupObject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MQTTNet" Version="2.8.2" />
+    <PackageReference Include="CommandLineParser" Version="2.3.65" />
+  </ItemGroup>
+
+</Project>

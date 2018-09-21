@@ -49,14 +49,14 @@ Task("Update-Version")
 
 Task("Restore")
     .Does(() => {
-        DotNetCoreRestore("./src/MarkdownGenerator.sln");
+        DotNetCoreRestore("./src/MQTTServer.sln");
     });
 
 Task("Build")
     .IsDependentOn("Restore")
     .IsDependentOn("Update-Version")
 	.Does(() => {
-        DotNetCoreBuild("./src/MarkdownGenerator.sln", new DotNetCoreBuildSettings {
+        DotNetCoreBuild("./src/MQTTServer.sln", new DotNetCoreBuildSettings {
             Configuration = "Release",
             MSBuildSettings = MSBuildSettings
         });
@@ -65,7 +65,7 @@ Task("Build")
 Task("Publish")
     .IsDependentOn("Build")
     .Does(() => {
-        DotNetCorePublish("./src/MarkdownGenerator.sln", new DotNetCorePublishSettings {
+        DotNetCorePublish("./src/MQTTServer.sln", new DotNetCorePublishSettings {
             Configuration = "Release"
         });
     });
@@ -73,7 +73,7 @@ Task("Publish")
 Task("Pack")
     .IsDependentOn("Publish")
     .Does(() => {
-        DotNetCorePack("./src/MarkdownGenerator.sln", new DotNetCorePackSettings {
+        DotNetCorePack("./src/MQTTServer.sln", new DotNetCorePackSettings {
             NoBuild = true,
             Configuration = "Release",
             OutputDirectory = "./packages.local",

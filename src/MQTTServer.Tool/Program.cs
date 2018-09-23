@@ -10,6 +10,8 @@ using System.Linq;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.IO;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Igloo15.MQTTServer.Tool
 {
@@ -17,13 +19,28 @@ namespace Igloo15.MQTTServer.Tool
     {
         private static ILogger _logger;
         private static Interceptors _interceptors;
+        private static Igloo15MqttServer _server;
+        private static LoggerFactory _factory;
 
         static void Main(string[] args) => Parser.Default.ParseArguments<Options>(args).MapResult(o => Execute(o), _ => 1);
 
         static int Execute(Options config)
         {
+            AppDomain.CurrentDomain.ProcessExit += (s, ev) =>
+            {
+                _logger?.LogInformation("MQTTServer Closed");
+                _factory?.Dispose();
+            };
 
-            LoggerFactory factory = new LoggerFactory();
+            Console.CancelKeyPress += (s, ev) =>
+            {
+                _logger?.LogInformation("Ctrl+C pressed");
+                _logger?.LogInformation("MQTTServer Closing");
+                ev.Cancel = true;
+                _server?.StopAsync().Wait();
+            };
+
+            _factory = new LoggerFactory();
             if (File.Exists(config.ConfigurationFileLocation))
             {
 
@@ -34,34 +51,55 @@ namespace Igloo15.MQTTServer.Tool
                 IConfiguration configFile = builder.Build();
 
                 configFile.GetSection("Server").Bind(config);
-                factory.AddConsole(configFile.GetSection("Logging:Console"));
+                _factory.AddConsole(configFile.GetSection("Logging:Console"));
             }
             else
             {
                 if(Enum.TryParse<LogLevel>(config.LogLevel, out LogLevel result))
                 {
-                    factory.AddConsole(result);
+                    _factory.AddConsole(result);
                 }
                 else
                 {
-                    factory.AddConsole(LogLevel.Information);
+                    _factory.AddConsole(LogLevel.Information);
                 }
             }
 
-            _logger = factory.CreateLogger<Program>();
-            _interceptors = new Interceptors(factory);
-            var server = InitializeServer(config, factory);
+            _logger = _factory.CreateLogger<Program>();
 
-            if (server == null)
+            if (config.MakeConfig)
+            {
+                if (File.Exists(config.ConfigurationFileLocation))
+                {
+                    _logger.LogInformation("Configuration file {configFile} already exists", config.ConfigurationFileLocation);
+                    return 0;
+                }
+                _logger.LogInformation("Copying Default Configuration to Working Directory");
+                File.Copy(Path.Combine(Path.GetDirectoryName(typeof(Program).Assembly.Location), config.ConfigurationFileLocation), config.ConfigurationFileLocation);
+                _logger.LogInformation("Config File Copied");
+                return 0;
+            }
+
+
+            _interceptors = new Interceptors(_factory);
+            _server = InitializeServer(config, _factory);
+
+            if (_server == null)
                 return 1;
 
-            var task = server.StartAsync();
+            var task = _server.StartAsync();
 
             _logger.LogInformation("Server Started on {Address}:{Port}", config.IPAddress, config.Port);
+            _logger.LogInformation("Hit Ctrl-C to exit");
 
-            Console.ReadLine();
+            task.Wait();
+            
+            while(_server.IsRunning())
+            {
+                Task.Delay(250).Wait();
+            }
 
-            server.StopAsync().Wait();
+            
 
             return 0;
         }

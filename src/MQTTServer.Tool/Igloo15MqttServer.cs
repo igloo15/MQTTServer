@@ -11,6 +11,7 @@ namespace Igloo15.MQTTServer.Tool
         ILogger _logger;
         IMqttServer _server;
         IMqttServerOptions _options;
+        bool _isRunning;
 
         public Igloo15MqttServer(IMqttServerOptions options, ILoggerFactory factory)
         {
@@ -23,6 +24,16 @@ namespace Igloo15.MQTTServer.Tool
             _options = options;
             _logger = factory.CreateLogger<Igloo15MqttLogger>();
             _server = new MqttFactory().CreateMqttServer(new Igloo15MqttLogger(factory));
+
+            _server.Started += (s, ev) =>
+            {
+                _isRunning = true;
+            };
+
+            _server.Stopped += (s, ev) =>
+            {
+                _isRunning = false;
+            };
         }
 
         public Task StartAsync()
@@ -33,6 +44,11 @@ namespace Igloo15.MQTTServer.Tool
         public Task StopAsync()
         {
             return _server.StopAsync();
+        }
+
+        public bool IsRunning()
+        {
+            return _isRunning;
         }
     }
 

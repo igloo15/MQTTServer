@@ -6,6 +6,8 @@ var target = Argument<string>("target", "Default");
 
 GitVersion result;
 DotNetCoreMSBuildSettings MSBuildSettings;
+string SolutionLocation = "./src/MQTTServer.sln";
+string PackagesLocation = "./packages.local";
 
 Setup((c) =>
 {
@@ -47,16 +49,21 @@ Task("Update-Version")
         Information(result.Dump());
 	});
 
+Task("Clean-Packages-Local")
+    .Does(() => {
+        CleanDirectories(PackagesLocation);
+    });
+
 Task("Restore")
     .Does(() => {
-        DotNetCoreRestore("./src/MQTTServer.sln");
+        DotNetCoreRestore(SolutionLocation);
     });
 
 Task("Build")
     .IsDependentOn("Restore")
     .IsDependentOn("Update-Version")
 	.Does(() => {
-        DotNetCoreBuild("./src/MQTTServer.sln", new DotNetCoreBuildSettings {
+        DotNetCoreBuild(SolutionLocation, new DotNetCoreBuildSettings {
             Configuration = "Release",
             MSBuildSettings = MSBuildSettings
         });
@@ -65,18 +72,19 @@ Task("Build")
 Task("Publish")
     .IsDependentOn("Build")
     .Does(() => {
-        DotNetCorePublish("./src/MQTTServer.sln", new DotNetCorePublishSettings {
+        DotNetCorePublish(SolutionLocation, new DotNetCorePublishSettings {
             Configuration = "Release"
         });
     });
 
 Task("Pack")
+    .IsDependentOn("Clean-Packages-Local")
     .IsDependentOn("Publish")
     .Does(() => {
-        DotNetCorePack("./src/MQTTServer.sln", new DotNetCorePackSettings {
+        DotNetCorePack(SolutionLocation, new DotNetCorePackSettings {
             NoBuild = true,
             Configuration = "Release",
-            OutputDirectory = "./packages.local",
+            OutputDirectory = PackagesLocation,
             MSBuildSettings = MSBuildSettings
         });
     });
@@ -84,7 +92,7 @@ Task("Pack")
 Task("Push")
     .IsDependentOn("Pack")
     .Does(() => {
-        foreach(var nupkgFile in GetFiles("./packages.local/*.nupkg"))
+        foreach(var nupkgFile in GetFiles(PackagesLocation+"/*.nupkg"))
         {
             Information($"Pushing Package {nupkgFile}");
             NuGetPush(nupkgFile, new NuGetPushSettings {

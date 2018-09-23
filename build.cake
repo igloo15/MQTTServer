@@ -73,7 +73,8 @@ Task("Publish")
     .IsDependentOn("Build")
     .Does(() => {
         DotNetCorePublish(SolutionLocation, new DotNetCorePublishSettings {
-            Configuration = "Release"
+            Configuration = "Release",
+            MSBuildSettings = MSBuildSettings
         });
     });
 

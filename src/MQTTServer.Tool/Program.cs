@@ -34,7 +34,7 @@ namespace Igloo15.MQTTServer.Tool
 
             Console.CancelKeyPress += (s, ev) =>
             {
-                _logger?.LogInformation("Ctrl+C pressed");
+                _logger?.LogInformation("Ctrl-C pressed");
                 _logger?.LogInformation("MQTTServer Closing");
                 ev.Cancel = true;
                 _server?.StopAsync().Wait();
@@ -45,7 +45,7 @@ namespace Igloo15.MQTTServer.Tool
             {
 
                 var builder = new ConfigurationBuilder()
-                    .AddJsonFile(config.ConfigurationFileLocation)
+                    .AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), config.ConfigurationFileLocation))
                     .AddEnvironmentVariables("MQTTSERVER");
 
                 IConfiguration configFile = builder.Build();
@@ -65,7 +65,7 @@ namespace Igloo15.MQTTServer.Tool
                 }
             }
 
-            _logger = _factory.CreateLogger<Program>();
+            _logger = _factory.CreateLogger("MQTTServer");
 
             if (config.MakeConfig)
             {
@@ -90,7 +90,7 @@ namespace Igloo15.MQTTServer.Tool
             var task = _server.StartAsync();
 
             _logger.LogInformation("Server Started on {Address}:{Port}", config.IPAddress, config.Port);
-            _logger.LogInformation("Hit Ctrl-C to exit");
+            _logger.LogInformation("Hit Ctrl-C to Exit");
 
             task.Wait();
             
@@ -98,8 +98,6 @@ namespace Igloo15.MQTTServer.Tool
             {
                 Task.Delay(250).Wait();
             }
-
-            
 
             return 0;
         }

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MQTTServer.Tester": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

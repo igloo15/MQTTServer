@@ -1,0 +1,31 @@
+<h1>Service List</h1>
+
+<p>A list of connected services</p>
+
+<p *ngIf="!services"><em>Loading...</em></p>
+<button (click)="RefreshData()" *ngIf="services">Fetch Data</button>
+<table class='table' *ngIf="services">
+  <thead>
+    <tr>
+      <th style="width: 12%">Name</th>
+      <th style="width: 12%">Connected</th>
+      <th style="width: 12%">End Point</th>
+      <th style="width: 50%">Subscription</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let service of services">
+      <td style="width: 12%">{{ service.name }}</td>
+      <td style="width: 12%">{{ service.connected }}</td>
+      <td style="width: 12%">{{ service.endPoint }}</td>
+      <td style="width: 50%">
+        <table class="table" *ngIf="service.subscriptions">
+          <tr *ngFor="let sub of service.subscriptions">
+            <td>{{sub}}</td>
+          </tr>
+        </table>
+      </td>
+      
+    </tr>
+  </tbody>
+</table>

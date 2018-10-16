@@ -1,5 +1,7 @@
-﻿using MQTTnet;
+﻿using Microsoft.AspNetCore.Hosting;
+using MQTTnet;
 using MQTTnet.Client;
+using MQTTServer.Core;
 using System;
 using System.Threading.Tasks;
 
@@ -12,6 +14,12 @@ namespace MQTTServer.Tester
             
 
             Console.WriteLine("Hello World!");
+
+            MqttCore core = new MqttCore();
+
+            core.CreateWebHostBuilder(new string[] { }).Build().Run();
+
+
 
             var options = new MqttClientOptionsBuilder()
                                 .WithTcpServer("localhost", 5002) // Port is optional

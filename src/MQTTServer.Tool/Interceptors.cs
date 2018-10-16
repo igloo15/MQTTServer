@@ -31,6 +31,7 @@ namespace Igloo15.MQTTServer.Tool
 
         public void ConnectionInterceptor(MqttConnectionValidatorContext context)
         {
+            
             _connectionLogger.LogInformation("Client {ClientId} has connected to server from {Address}", context.ClientId, context.Endpoint);
         }
     }

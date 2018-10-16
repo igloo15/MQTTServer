@@ -1,0 +1,25 @@
+.my-tr {
+  width: 100%;
+  display: inline-table;
+  height: 40px;
+  table-layout: fixed;
+}
+
+.my-tr-head {
+  width: 98.5%;
+  display: inline-table;
+  height: 40px;
+  table-layout: fixed;
+}
+
+.my-table {
+  height: 1100px;
+  display: -moz-groupbox;
+}
+
+.my-tbody {
+  overflow-y: scroll;
+  height: 1000px;
+  width: 98.5%;
+  position: absolute;
+}

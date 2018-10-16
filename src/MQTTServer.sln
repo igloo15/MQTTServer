@@ -5,7 +5,9 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MQTTServer.Tool", "MQTTServer.Tool\MQTTServer.Tool.csproj", "{6F7BA81C-992B-4389-B71C-E3B1A1D0F73B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MQTTServer.Tester", "MQTTServer.Tester\MQTTServer.Tester.csproj", "{D83465C8-7A17-49D2-AEFF-A7318D38802E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MQTTServer.Tester", "MQTTServer.Tester\MQTTServer.Tester.csproj", "{D83465C8-7A17-49D2-AEFF-A7318D38802E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MQTTServer.Core", "MQTTServer.Core\MQTTServer.Core.csproj", "{662ED5A2-E521-4184-BAB7-8F89C6691BC2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,18 @@ Global
 		{D83465C8-7A17-49D2-AEFF-A7318D38802E}.Release|x64.Build.0 = Release|Any CPU
 		{D83465C8-7A17-49D2-AEFF-A7318D38802E}.Release|x86.ActiveCfg = Release|Any CPU
 		{D83465C8-7A17-49D2-AEFF-A7318D38802E}.Release|x86.Build.0 = Release|Any CPU
+		{662ED5A2-E521-4184-BAB7-8F89C6691BC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{662ED5A2-E521-4184-BAB7-8F89C6691BC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{662ED5A2-E521-4184-BAB7-8F89C6691BC2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{662ED5A2-E521-4184-BAB7-8F89C6691BC2}.Debug|x64.Build.0 = Debug|Any CPU
+		{662ED5A2-E521-4184-BAB7-8F89C6691BC2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{662ED5A2-E521-4184-BAB7-8F89C6691BC2}.Debug|x86.Build.0 = Debug|Any CPU
+		{662ED5A2-E521-4184-BAB7-8F89C6691BC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{662ED5A2-E521-4184-BAB7-8F89C6691BC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{662ED5A2-E521-4184-BAB7-8F89C6691BC2}.Release|x64.ActiveCfg = Release|Any CPU
+		{662ED5A2-E521-4184-BAB7-8F89C6691BC2}.Release|x64.Build.0 = Release|Any CPU
+		{662ED5A2-E521-4184-BAB7-8F89C6691BC2}.Release|x86.ActiveCfg = Release|Any CPU
+		{662ED5A2-E521-4184-BAB7-8F89C6691BC2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

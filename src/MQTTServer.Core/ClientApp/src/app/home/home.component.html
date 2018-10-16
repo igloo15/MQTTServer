@@ -1,0 +1,22 @@
+<h1>Mqtt Server</h1>
+<p>This server shows all the clients being connected to the server</p>
+<hr />
+<p *ngIf="!diag"><em>Loading...</em></p>
+<div class="panel panel-primary" style="width:45%;float:left;margin:10px" *ngIf="diag">
+  <div class="panel-heading">Number of Clients Connected</div>
+  <div class="panel-body">{{diag.numClients}}</div>
+</div>
+<div class="panel panel-primary" style="width:45%;float:left;margin:10px" *ngIf="diag">
+  <div class="panel-heading">Number of Subscriptions</div>
+  <div class="panel-body">{{diag.numSubscriptions}}</div>
+</div>
+<div class="panel panel-primary" style="width:45%;float:left;margin:10px" *ngIf="diag">
+  <div class="panel-heading">Number of Messages Sent</div>
+  <div class="panel-body">{{diag.numMessages}}</div>
+</div>
+<div class="panel panel-primary" style="width:45%;float:left;margin:10px" *ngIf="diag">
+  <div class="panel-heading">Message Rate</div>
+  <div class="panel-body">{{diag.messagesPerMinute}} per minute</div>
+</div>
+
+

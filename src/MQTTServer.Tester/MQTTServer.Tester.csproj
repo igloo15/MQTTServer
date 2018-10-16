@@ -17,4 +17,8 @@
     <PackageReference Include="MQTTnet" Version="2.8.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MQTTServer.Core\MQTTServer.Core.csproj" />
+  </ItemGroup>
+
 </Project>

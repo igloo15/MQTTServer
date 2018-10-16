@@ -1,0 +1,31 @@
+<h1>Messages Received</h1>
+
+<p>List of messages received by clients</p>
+
+<p *ngIf="!messages"><em>Loading...</em></p>
+<label *ngIf="messages">
+  Auto Refresh
+  <input type="checkbox" [checked]="alive">
+</label>
+<label *ngIf="messages">
+  Auto Scroll
+  <input type="checkbox" [checked]="activeScroll">
+</label>
+
+<table class='table table-hover table-condensed my-table' *ngIf="messages">
+  <thead>
+    <tr class="my-tr-head">
+      <th style="width: 20%">Name</th>
+      <th style="width: 50%">Topic</th>
+      <th style="width: 20%">Time</th>
+    </tr>
+  </thead>
+  <tbody #scrollMe class="my-tbody" >
+    <tr *ngFor="let message of messages" class="my-tr">
+      <td style="width: 20%">{{ message.serviceName }}</td>
+      <td style="width: 50%">{{ message.topic }}</td>
+      <td style="width: 20%">{{ message.time }}</td>
+    </tr>
+  </tbody>
+</table>
+

@@ -21,6 +21,9 @@
     "ShowSubscriptions": true,
     "ShowMessages": true,
     "ShowClientConnections": true
+  },
+  "WebServer": {
+    "Buffer":  10
   }
 
 }

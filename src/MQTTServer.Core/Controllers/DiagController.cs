@@ -19,9 +19,17 @@ namespace MQTTServer.Core.Controllers
         }
 
         // GET: /<controller>/
-        public Diagnostics Index()
+        [HttpGet("Status")]
+        public Diagnostics GetStatus()
         {
             return _model.GetDiagnostics();
+        }
+
+        // GET: /<controller>/Version
+        [HttpGet("Version")]
+        public string GetVersion()
+        {
+            return typeof(DiagController).Assembly.GetName().Version.ToString();
         }
     }
 }

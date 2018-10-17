@@ -94,7 +94,11 @@ namespace MQTTServer.Core
             double totalMinutes = (DateTime.Now - _startTime).TotalMinutes;
 
             if(totalMinutes > 0)
+            {
                 _diagMessage.MessagesPerMinute = (int)(_diagMessage.NumMessages / totalMinutes);
+                _diagMessage.MinutesSinceStart = Math.Round(totalMinutes, 2);
+            }
+                
             
             return _diagMessage;
         }
@@ -106,6 +110,7 @@ namespace MQTTServer.Core
         public int NumSubscriptions { get; set; }
         public int NumMessages { get; set; }
         public int MessagesPerMinute { get; set; }
+        public double MinutesSinceStart { get; set; }
     }
 
     public class Message

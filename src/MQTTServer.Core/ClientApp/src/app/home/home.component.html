@@ -3,6 +3,10 @@
 <hr />
 <p *ngIf="!diag"><em>Loading...</em></p>
 <div class="panel panel-primary" style="width:45%;float:left;margin:10px" *ngIf="diag">
+  <div class="panel-heading">Server Uptime</div>
+  <div class="panel-body">{{diag.minutesSinceStart}} minutes</div>
+</div>
+<div class="panel panel-primary" style="width:45%;float:left;margin:10px" *ngIf="diag">
   <div class="panel-heading">Number of Clients Connected</div>
   <div class="panel-body">{{diag.numClients}}</div>
 </div>

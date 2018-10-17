@@ -28,7 +28,7 @@ export class HomeComponent {
     TimerObservable.create(0, this.interval)
       .takeWhile(() => this.alive)
       .subscribe(() => {
-        this.internalHttp.get<Diagnostic>(this.internalBaseUrl + 'api/Diag').subscribe(result => {
+        this.internalHttp.get<Diagnostic>(this.internalBaseUrl + 'api/Diag/Status').subscribe(result => {
           this.diag = result;
         }, error => console.error(error));
       });
@@ -41,4 +41,5 @@ interface Diagnostic {
   numSubscriptions: number;
   numMessages: number;
   messagesPerMinute: number;
+  minutesSinceStart: number;
 }

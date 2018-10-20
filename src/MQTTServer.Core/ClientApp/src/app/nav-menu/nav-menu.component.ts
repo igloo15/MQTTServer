@@ -19,7 +19,7 @@ export class NavMenuComponent {
   }
 
   getVersion() {
-    this.internalHttp.get<string>(this.internalUrl + 'api/Diag/Version').subscribe(result => {
+    this.internalHttp.get(this.internalUrl + 'api/Diag/Version', { responseType: 'text' }).subscribe(result => {
 
       this.version = result;
 

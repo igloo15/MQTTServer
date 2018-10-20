@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTServer.Core;
@@ -11,13 +12,19 @@ namespace MQTTServer.Tester
     {
         static void Main(string[] args)
         {
-            
+
 
             Console.WriteLine("Hello World!");
 
-            MqttCore core = new MqttCore();
+            MqttCore core = new MqttCore(new ServerOptions {
+                LogLevel = "Information",
+                ShowSubscriptions = true,
+                ShowClientConnections = true,
+                ShowMessages = true,
+                StartWebServer = true
+            });
 
-            core.CreateWebHostBuilder(new string[] { }).Build().Run();
+            core.Start();
 
 
 
@@ -28,7 +35,7 @@ namespace MQTTServer.Tester
             var client = new MqttFactory().CreateMqttClient();
 
             Console.WriteLine("Ready to Connect");
-            
+
             Console.ReadLine();
 
             Console.WriteLine("Connecting");
@@ -44,7 +51,7 @@ namespace MQTTServer.Tester
 
                 return true;
             })
-            .ContinueWith(t => 
+            .ContinueWith(t =>
             {
                 if(t.Result)
                 {

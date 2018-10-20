@@ -16,21 +16,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.3.0" />
     <PackageReference Include="GitVersionTask" Version="4.0.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="igloo15.Serilog.Microsoft.Logger" Version="0.2.1" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.1.4" />
     <PackageReference Include="Microsoft.AspNetCore.HttpsPolicy" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.1.3" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="2.1.1" />
+    <PackageReference Include="MQTTnet" Version="2.8.4" />
+    <PackageReference Include="MQTTnet.AspNetCore" Version="2.8.4" />
   </ItemGroup>
 
-  <ItemGroup>
-    <!-- Don't publish the SPA source files, but do show them in the project files list -->
-    <Content Remove="$(SpaRoot)**" />
-    <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
-  </ItemGroup>
+  
 
   <ItemGroup>
     <Content Update="appsettings.json">
@@ -39,11 +39,20 @@
     <None Include="$(SpaRoot)dist\**" CopyToOutputDirectory="PreserveNewest" Link="ClientApp\dist\%(RecursiveDir)\%(Filename)%(Extension)" />
   </ItemGroup>
 
-  <Target Name="BuildWeb" BeforeTargets="Build">
+  <Target Name="BuildWeb" BeforeTargets="GetCopyToOutputDirectoryItems">
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- --prod" />
-    <Message Text="GitVersion_InformationalVersion: $(GitVersion_InformationalVersion)" Importance="high"/>
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- --prod" Condition="$(Configuration) == 'Release'" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" Condition="$(Configuration) == 'Debug'" />
+    <Message Text="GitVersion_InformationalVersion: $(GitVersion_InformationalVersion)" Importance="high" />
+
+    <ItemGroup>
+      <!-- Don't publish the SPA source files, but do show them in the project files list -->
+      <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+      <EmbeddedResource Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+    </ItemGroup>
+
   </Target>
 
+  
 
 </Project>

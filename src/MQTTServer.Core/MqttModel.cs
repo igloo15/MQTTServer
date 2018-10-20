@@ -9,6 +9,8 @@ namespace MQTTServer.Core
 {
     public class MqttModel
     {
+        public Guid Id { get; } = Guid.NewGuid();
+
         private const string DateFormat = "MM/dd h:mm:ss tt";
 
         private Dictionary<string, Service> _services = new Dictionary<string, Service>();
@@ -108,9 +110,35 @@ namespace MQTTServer.Core
     {
         public int NumClients { get; set; }
         public int NumSubscriptions { get; set; }
-        public int NumMessages { get; set; }
+        public long NumMessages { get; set; }
         public int MessagesPerMinute { get; set; }
         public double MinutesSinceStart { get; set; }
+
+        public List<DiagnosticValue> GetValues()
+        {
+            return new List<DiagnosticValue>
+            {
+                new DiagnosticValue("Number of Clients", NumClients.ToString()),
+                new DiagnosticValue("Number of Subscriptions", NumSubscriptions.ToString()),
+                new DiagnosticValue("Number of Messages", $"{NumMessages} messages"),
+                new DiagnosticValue("Message Rate", $"{MessagesPerMinute} per minute"),
+                new DiagnosticValue("Server Up Time", $"{MinutesSinceStart} minutes")
+            };
+        }
+    }
+
+    public class DiagnosticValue
+    {
+        public DiagnosticValue(string name, string value, double numValue = -1)
+        {
+            Name = name;
+            Value = value;
+            NumValue = numValue;
+        }
+
+        public string Name { get; set; }
+        public string Value { get; set; }
+        public double NumValue { get; set; }
     }
 
     public class Message

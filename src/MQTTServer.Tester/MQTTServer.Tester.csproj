@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MQTTnet" Version="2.8.2" />
+    <PackageReference Include="MQTTnet" Version="2.8.4" />
   </ItemGroup>
 
   <ItemGroup>

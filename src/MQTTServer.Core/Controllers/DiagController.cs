@@ -20,9 +20,9 @@ namespace MQTTServer.Core.Controllers
 
         // GET: /<controller>/
         [HttpGet("Status")]
-        public Diagnostics GetStatus()
+        public DiagnosticValue[] GetStatus()
         {
-            return _model.GetDiagnostics();
+            return _model.GetDiagnostics().GetValues().ToArray();
         }
 
         // GET: /<controller>/Version

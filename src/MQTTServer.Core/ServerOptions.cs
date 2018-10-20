@@ -2,9 +2,9 @@ using System;
 using CommandLine;
 using Microsoft.Extensions.Configuration;
 
-namespace Igloo15.MQTTServer.Tool
+namespace MQTTServer.Core
 {
-    internal class Options
+    public class ServerOptions
     {
         [Option('p', "port", Default = 5002, HelpText = "The port to run the mqtt server on")]
         public int Port { get; set; } = 5002;
@@ -54,6 +54,23 @@ namespace Igloo15.MQTTServer.Tool
         [Option('m', "make-config", Default = false, HelpText = "When this options is defined the server will create a config in current working directory and immediately close")]
         public bool MakeConfig { get; set; }
 
+        [Option("web-server", Default = false, HelpText = "When this option is defined the server will start a diagnostic webserver")]
+        public bool StartWebServer { get; set; }
+
+        [Option("web-port", Default = 4504, HelpText = "Defines the port the webserver will run on")]
+        public int WebServerPort { get; set; } = 4504;
+
+        [Option('w', "websocket", Default = false, HelpText = "When this option is defined the server will start websocket connection to mqtt")]
+        public bool StartWebsockets { get; set; }
+
+        [Option("websocket-port", Default = 4505, HelpText = "Defines the port the websocket accept connections on")]
+        public int WebsocketPort { get; set; } = 4505;
+
+        [Option("file-log", Default = false, HelpText = "When this option is defined a log file will be created")]
+        public bool LogFiles { get; set; }
+
+        [Option("no-console-log", Default = false, HelpText = "When this option is defined the console log will be turned off")]
+        public bool NoLogConsole { get; set; }
     }
 
 }

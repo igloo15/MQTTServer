@@ -9,7 +9,7 @@ import 'rxjs/add/operator/takeWhile';
   templateUrl: './home.component.html'
 })
 export class HomeComponent {
-  public diag: Diagnostic;
+  public diags: Diagnostic[];
   private internalBaseUrl: string;
   private internalHttp: HttpClient;
   private interval: number;
@@ -28,8 +28,8 @@ export class HomeComponent {
     TimerObservable.create(0, this.interval)
       .takeWhile(() => this.alive)
       .subscribe(() => {
-        this.internalHttp.get<Diagnostic>(this.internalBaseUrl + 'api/Diag/Status').subscribe(result => {
-          this.diag = result;
+        this.internalHttp.get<Diagnostic[]>(this.internalBaseUrl + 'api/Diag/Status').subscribe(result => {
+          this.diags = result;
         }, error => console.error(error));
       });
 
@@ -37,9 +37,6 @@ export class HomeComponent {
 }
 
 interface Diagnostic {
-  numClients: number;
-  numSubscriptions: number;
-  numMessages: number;
-  messagesPerMinute: number;
-  minutesSinceStart: number;
+  name: string;
+  value: string;
 }

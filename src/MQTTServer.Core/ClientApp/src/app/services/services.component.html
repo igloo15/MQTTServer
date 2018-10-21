@@ -17,10 +17,11 @@
     <tr>
       <th>Name</th>
       <th>End Point</th>
+      <th>Time Connected</th>
       <th>Connected</th>
       <th>Protocol</th>
-      <th>Time Since Last Message(s)</th>
-      <th>Time Since Last Keep Alive(s)</th>
+      <th>Last Message(s)</th>
+      <th>Last NonKeepAlive(s)</th>
       <th>Pending Messages</th>
     </tr>
   </thead>
@@ -28,10 +29,11 @@
     <tr *ngFor="let service of services">
       <td>{{ service.clientId }}</td>
       <td>{{ service.endpoint }}</td>
+      <td>{{ service.timeConnected }}</td>
       <td>{{ service.isConnected }}</td>
       <td>{{ service.protocolVersion }}</td>
       <td>{{ service.timeSinceLastMessage }}</td>
-      <td>{{ service.timeSinceLastKeepAlive }}</td>
+      <td>{{ service.timeSinceLastNonKeepAlive }}</td>
       <td>{{ service.pendingMessages }}</td>
     </tr>
   </tbody>

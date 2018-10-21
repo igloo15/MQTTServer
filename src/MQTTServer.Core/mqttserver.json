@@ -35,8 +35,17 @@
     "CertificationLocation": "",
     "MessageStorageLocation": "./storage.json",
     "ShowSubscriptions": true,
-    "ShowMessages": true,
-    "ShowClientConnections": true
+    "ShowMessages": false,
+    "ShowClientConnections": true,
+    "ConfigurationFileLocation": "./mqttserver.json",
+    "LogLevel": "Information",
+    "UseKestrelServer": true,
+    "UseWebSocket": true,
+    "StartDiagWebServer": true,
+    "DiagWebServerPort": 4504,
+    "ShowMessageContent": false,
+    "LogFiles": false,
+    "NoLogConsole": false
   },
   "WebServer": {
     "Buffer": 100

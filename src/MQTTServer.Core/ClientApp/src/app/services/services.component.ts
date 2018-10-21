@@ -48,10 +48,11 @@ export class ServicesComponent implements OnDestroy {
 interface ServiceStatus {
   clientId: string;
   endpoint: string;
+  timeConnected: string;
   isConnected: boolean;
   protocolVersion: string;
   timeSinceLastMessage: number;
-  timeSinceLastKeepAlive: number;
+  timeSinceLastNonKeepAlive: number;
   pendingMessages: number;
 }
 

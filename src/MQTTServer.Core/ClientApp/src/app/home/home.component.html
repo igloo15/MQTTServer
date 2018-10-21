@@ -1,5 +1,6 @@
 <h1>Mqtt Server</h1>
 <p>This server shows all the clients being connected to the server</p>
+<p *ngIf="endpoint">Connected on {{ endpoint }}</p><p *ngIf="!endpoint">Not Connected</p>
 <hr />
 <p *ngIf="!diags"><em>Loading...</em></p>
 <label *ngIf="diags">

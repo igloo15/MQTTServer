@@ -42,7 +42,7 @@ namespace MQTTServer.Core
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
-        
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
@@ -60,9 +60,8 @@ namespace MQTTServer.Core
 
             app.UseMqttServer(s => _interceptors.SetServer(s));
 
-           
             app.UseStaticFiles();
-            
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

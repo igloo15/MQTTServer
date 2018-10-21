@@ -66,6 +66,9 @@ namespace MQTTServer.Core
         [Option("diag-web-port", Default = 4504, HelpText = "Defines the port the diagnostic webserver will run on")]
         public int DiagWebServerPort { get; set; } = 4504;
 
+        [Option("show-content", Default = false, HelpText = "When this option is defined the server will attempt to part messages")]
+        public bool ShowMessageContent { get; set; } = false;
+
         [Option("file-log", Default = false, HelpText = "When this option is defined a log file will be created")]
         public bool LogFiles { get; set; }
 

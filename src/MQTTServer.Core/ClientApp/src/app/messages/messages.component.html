@@ -16,20 +16,20 @@
 </label>
 <br />
 <hr />
-<table class='table table-hover table-condensed my-table' *ngIf="messages">
-  <thead>
-    <tr class="my-tr-head">
-      <th style="width: 25%">Name</th>
-      <th style="width: 50%">Topic</th>
-      <th style="width: 20%">Time</th>
-    </tr>
-  </thead>
-  <tbody #scrollMe class="my-tbody" >
-    <tr *ngFor="let message of messages" class="my-tr">
-      <td style="width: 20%">{{ message.serviceName }}</td>
-      <td style="width: 50%">{{ message.topic }}</td>
-      <td style="width: 20%">{{ message.time }}</td>
-    </tr>
-  </tbody>
-</table>
+<div class="row" *ngIf="messages" style="border-bottom-width:2px;border-bottom-color:black;border-bottom:solid">
+  <div class="col-md-4"><strong>Name</strong></div>
+  <div class="col-md-4"><strong>Topic</strong></div>
+  <div class="col-md-4"><strong>Time</strong></div>
+</div>
+<div #scrollMe class="row" style="overflow-y:scroll; height:80vh" *ngIf="messages">
+  <div class="col-md-12">
+    <div class="row" *ngFor="let message of messages">
+      <div class="col-md-4">{{ message.clientId }}</div>
+      <div class="col-md-4">{{ message.topic }}</div>
+      <div class="col-md-4">{{ message.time }}</div>
+      <div class="col-md-12" *ngIf="message.content" style="padding-top:15px;padding-bottom:15px"><strong>Content:</strong> {{ message.content }}</div>
+    </div>
+  </div>
+</div>
+
 

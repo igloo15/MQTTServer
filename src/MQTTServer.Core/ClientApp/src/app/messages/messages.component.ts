@@ -61,7 +61,8 @@ export class MessagesComponent implements OnDestroy {
 }
 
 interface Message {
-  serviceName: string;
+  clientId: string;
   time: string;
   topic: string;
+  content: string;
 }

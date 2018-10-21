@@ -40,16 +40,17 @@ namespace MQTTServer.Core
         {
             _logger.LogInformation("Starting Server on {IpAddress} and port {Port}", _options.DefaultEndpointOptions.BoundInterNetworkAddress.ToString(), _options.DefaultEndpointOptions.Port);
             await _server.StartAsync(_options);
+
+            while (_isRunning)
+            {
+                Task.Delay(250).Wait();
+            }
         }
 
         public async Task StopAsync()
         {
+            _isRunning = false;
             await _server.StopAsync();
-        }
-
-        public bool IsRunning()
-        {
-            return _isRunning;
         }
     }
 

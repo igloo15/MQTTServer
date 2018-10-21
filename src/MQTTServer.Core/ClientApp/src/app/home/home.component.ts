@@ -16,6 +16,7 @@ export class HomeComponent implements OnDestroy {
   private stop: boolean;
   public interval: number;
   public alive: boolean;
+  public endpoint: string;
 
 
   constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
@@ -24,7 +25,15 @@ export class HomeComponent implements OnDestroy {
     this.alive = true;
     this.stop = false;
     this.interval = 5000;
+    this.endpoint = null;
+    this.GetEndpoint();
     this.GetData(this);
+  }
+
+  public GetEndpoint() {
+    this.internalHttp.get(this.internalBaseUrl + 'api/Diag/Endpoint', { responseType: 'text' }).subscribe(result => {
+      this.endpoint = result;
+    });
   }
 
   public GetData(self: HomeComponent) {

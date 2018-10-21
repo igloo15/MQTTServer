@@ -24,7 +24,8 @@ namespace MQTTServer.Core
 
         public MqttCore(ServerOptions options)
         {
-            if (options.UseKestrelServer)
+            var useKestrel = GetConfiguration(options).GetValue<bool>("Server:UseKestrelServer");
+            if (useKestrel)
             {
                 _webHost = CreateWebHostBuilder(new string[] { }, options).Build();
                 _factory = _webHost.Services.GetService<ILoggerFactory>();
@@ -62,7 +63,7 @@ namespace MQTTServer.Core
                 await _server.StopAsync();
             }
         }
-        
+
         public void CreateSettings()
         {
             if (File.Exists(_settings.Server.ConfigurationFileLocation))
@@ -144,7 +145,7 @@ namespace MQTTServer.Core
                         o.Listen(address, settings.Server.Port, l => l.UseMqtt());
                     else
                         o.ListenLocalhost(settings.Server.Port, l => l.UseMqtt());
-                    
+
                     if(settings.Server.StartDiagWebServer)
                         o.ListenAnyIP(settings.Server.DiagWebServerPort);
                 })
@@ -153,13 +154,7 @@ namespace MQTTServer.Core
 
         private MqttServer InitializeServer(ServerOptions options)
         {
-            var builder = new ConfigurationBuilder()
-                .AddInMemoryCollection(MqttServerUtility.GetOptions(new MqttSettings(), ""))
-                .AddInMemoryCollection(MqttServerUtility.GetOptions(options, "Server"))
-                .AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), options.ConfigurationFileLocation), optional: true)
-                .AddEnvironmentVariables("MQTTSERVER");
-
-            var config = builder.Build();
+            var config = GetConfiguration(options);
             _settings = new MqttSettings();
             config.Bind(_settings);
 
@@ -174,6 +169,16 @@ namespace MQTTServer.Core
             _interceptors = new Interceptors(_factory, null, _settings);
 
             return new MqttServer(MqttServerUtility.BuildOptions(_settings.Server, _factory, _interceptors).Build(), _factory);
+        }
+
+        private IConfiguration GetConfiguration(ServerOptions options)
+        {
+            return new ConfigurationBuilder()
+                .AddInMemoryCollection(MqttServerUtility.GetOptions(new MqttSettings(), ""))
+                .AddInMemoryCollection(MqttServerUtility.GetOptions(options, "Server"))
+                .AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), options.ConfigurationFileLocation), optional: true)
+                .AddEnvironmentVariables("MQTTSERVER")
+                .Build();
         }
     }
 

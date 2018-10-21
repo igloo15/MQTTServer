@@ -33,6 +33,13 @@ namespace MqttServer.Tool
 
             _core = new MqttCore(config);
 
+            if (config.MakeConfig)
+            {
+                _core.CreateSettings();
+                return 0;
+            }
+
+
             _logger = _core.GetLoggerFactory().CreateLogger<Program>();
 
             var task = _core.StartAsync();
@@ -45,6 +52,5 @@ namespace MqttServer.Tool
             return 0;
         }
 
-       
     }
 }

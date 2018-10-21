@@ -46,7 +46,7 @@ export class SubscriptionsComponent implements OnDestroy {
 }
 
 interface ServiceSubscription {
-  name: string;
+  clientId: string;
   subscriptions: string[];
 }
 

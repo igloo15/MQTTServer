@@ -54,17 +54,17 @@ namespace MQTTServer.Core
         [Option('m', "make-config", Default = false, HelpText = "When this options is defined the server will create a config in current working directory and immediately close")]
         public bool MakeConfig { get; set; }
 
-        [Option("web-server", Default = false, HelpText = "When this option is defined the server will start a diagnostic webserver")]
-        public bool StartWebServer { get; set; }
+        [Option('k', "use-kestrel-server", Default = false, HelpText = "Instead of custom TCP server for MqttNet use Kestrel Sockets which may be 30 times more performant. Normally this should be used")]
+        public bool UseKestrelServer { get; set; }
 
-        [Option("web-port", Default = 4504, HelpText = "Defines the port the webserver will run on")]
-        public int WebServerPort { get; set; } = 4504;
+        [Option('w', "use-web-socket", Default = false, HelpText = "Turn on websocket endpoint for Mqtt Kestrel Server. Won't work (unless use-kestrel-server|k) flag is set")]
+        public bool UseWebSocket { get; set; }
 
-        [Option('w', "websocket", Default = false, HelpText = "When this option is defined the server will start websocket connection to mqtt")]
-        public bool StartWebsockets { get; set; }
+        [Option('d', "diag-web-server", Default = false, HelpText = "When this option is defined the server will start a diagnostic webserver")]
+        public bool StartDiagWebServer { get; set; }
 
-        [Option("websocket-port", Default = 4505, HelpText = "Defines the port the websocket accept connections on")]
-        public int WebsocketPort { get; set; } = 4505;
+        [Option("diag-web-port", Default = 4504, HelpText = "Defines the port the diagnostic webserver will run on")]
+        public int DiagWebServerPort { get; set; } = 4504;
 
         [Option("file-log", Default = false, HelpText = "When this option is defined a log file will be created")]
         public bool LogFiles { get; set; }

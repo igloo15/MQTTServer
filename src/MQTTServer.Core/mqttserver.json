@@ -1,10 +1,26 @@
 {
   "Logging": {
+    "LogLevel": {
+      "Default": "Information"
+    },
+    "File": {
+      "LogLevel": {
+        "Default": "Information",
+        "Microsoft.AspNetCore": "Warning"
+      },
+      "Shared": true,
+      "Template": "{Timestamp:o} {RequestId,13} [{Level:u3}] {Message} ({EventId:x8}){NewLine}{Exception}",
+      "FlushInterval": 2,
+      "PathFormat": "Logs/mqttserver.log",
+      "FileCountLimit": 31,
+      "IncludeScopes": true
+    },
     "Console": {
       "IncludeScopes": true,
       "LogLevel": {
         "Default": "Information",
-        "IMqttLogger": "Warning"
+        "IMqttLogger": "Warning",
+        "Microsoft.AspNetCore":  "Warning"
       }
     }
   },
@@ -23,7 +39,6 @@
     "ShowClientConnections": true
   },
   "WebServer": {
-    "Buffer":  10
+    "Buffer": 100
   }
-
 }

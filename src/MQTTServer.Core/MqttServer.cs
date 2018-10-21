@@ -36,15 +36,15 @@ namespace MQTTServer.Core
             };
         }
 
-        public Task StartAsync()
+        public async Task StartAsync()
         {
             _logger.LogInformation("Starting Server on {IpAddress} and port {Port}", _options.DefaultEndpointOptions.BoundInterNetworkAddress.ToString(), _options.DefaultEndpointOptions.Port);
-            return _server.StartAsync(_options);
+            await _server.StartAsync(_options);
         }
 
-        public Task StopAsync()
+        public async Task StopAsync()
         {
-            return _server.StopAsync();
+            await _server.StopAsync();
         }
 
         public bool IsRunning()

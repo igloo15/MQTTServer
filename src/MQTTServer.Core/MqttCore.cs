@@ -2,63 +2,80 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
-using MQTTnet.Server;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using MQTTnet.AspNetCore;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using System.Net;
 
 namespace MQTTServer.Core
 {
     public class MqttCore
     {
-        private ILogger _logger;
+        internal const string MqttEmbeddedBase = "MQTTServer.Core.ClientApp.dist";
+
+        private ILoggerFactory _factory;
+        private ILogger<MqttCore> _logger;
         private Interceptors _interceptors;
         private MqttServer _server;
         private IWebHost _webHost;
+        private MqttSettings _settings;
 
         public MqttCore(ServerOptions options)
         {
-            
-            if (options.StartWebServer)
+            if (options.UseKestrelServer)
             {
                 _webHost = CreateWebHostBuilder(new string[] { }, options).Build();
+                _factory = _webHost.Services.GetService<ILoggerFactory>();
+                _settings = _webHost.Services.GetService<MqttSettings>();
             }
             else
             {
                 _server = InitializeServer(options);
             }
+            _logger = _factory.CreateLogger<MqttCore>();
         }
 
 
 
-        public Task Start()
+        public async Task StartAsync()
         {
             if (_server == null)
             {
-                return _webHost.RunAsync();
+                await _webHost.RunAsync();
             }
             else
             {
-                return _server.StartAsync();
+                await _server.StartAsync();
             }
         }
 
-        public Task Stop()
+        public async Task StopAsync()
         {
             if(_server == null)
             {
-                return _webHost.StopAsync();
+                await _webHost.StopAsync();
             }
             else
             {
-                return _server.StopAsync();
+                await _server.StopAsync();
             }
+        }
+        
+        public void CreateSettings()
+        {
+            if (File.Exists(_settings.Server.ConfigurationFileLocation))
+            {
+                _logger?.LogInformation("Configuration file {configFile} already exists", _settings.Server.ConfigurationFileLocation);
+                return;
+            }
+            File.WriteAllText(_settings.Server.ConfigurationFileLocation, JsonConvert.SerializeObject(new MqttSettings(), Formatting.Indented));
+        }
+
+        public ILoggerFactory GetLoggerFactory()
+        {
+            return _factory;
         }
 
         private IWebHostBuilder CreateWebHostBuilder(string[] args, ServerOptions options) =>
@@ -121,8 +138,15 @@ namespace MQTTServer.Core
                     MqttSettings settings = new MqttSettings();
                     c.Configuration.Bind(settings);
 
-                    o.ListenAnyIP(settings.Server.Port, l => l.UseMqtt());
-                    o.ListenAnyIP(settings.Server.WebServerPort);
+                    if(string.Equals(settings.Server.IPAddress, "Any", System.StringComparison.OrdinalIgnoreCase))
+                        o.ListenAnyIP(settings.Server.Port, l => l.UseMqtt());
+                    else if (IPAddress.TryParse(settings.Server.IPAddress, out IPAddress address))
+                        o.Listen(address, settings.Server.Port, l => l.UseMqtt());
+                    else
+                        o.ListenLocalhost(settings.Server.Port, l => l.UseMqtt());
+                    
+                    if(settings.Server.StartDiagWebServer)
+                        o.ListenAnyIP(settings.Server.DiagWebServerPort);
                 })
                 .UseStartup<Startup>();
 
@@ -136,24 +160,20 @@ namespace MQTTServer.Core
                 .AddEnvironmentVariables("MQTTSERVER");
 
             var config = builder.Build();
-            MqttSettings settings = new MqttSettings();
-            config.Bind(settings);
+            _settings = new MqttSettings();
+            config.Bind(_settings);
 
-            var factory = new LoggerFactory();
+            _factory = new LoggerFactory();
 
-            if (!settings.Server.NoLogConsole)
-                factory.AddConsole(config.GetSection("Logging:Console"));
+            if (!_settings.Server.NoLogConsole)
+                _factory.AddConsole(config.GetSection("Logging:Console"));
 
-            if (settings.Server.LogFiles)
-                factory.AddFile(settings.Logging.File);
+            if (_settings.Server.LogFiles)
+                _factory.AddFile(_settings.Logging.File);
 
-            _interceptors = new Interceptors(factory, null);
+            _interceptors = new Interceptors(_factory, null, _settings);
 
-            MqttServer server = new MqttServer(MqttServerUtility.BuildOptions(settings.Server, factory, _interceptors).Build(), factory);
-
-
-
-            return server;
+            return new MqttServer(MqttServerUtility.BuildOptions(_settings.Server, _factory, _interceptors).Build(), _factory);
         }
     }
 

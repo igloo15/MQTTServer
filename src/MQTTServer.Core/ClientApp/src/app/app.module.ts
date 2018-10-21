@@ -9,6 +9,7 @@ import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
 import { MessagesComponent } from './messages/messages.component';
 import { ServicesComponent } from './services/services.component';
+import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { ServicesComponent } from './services/services.component';
     NavMenuComponent,
     HomeComponent,
     MessagesComponent,
-    ServicesComponent
+    ServicesComponent,
+    SubscriptionsComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -26,6 +28,7 @@ import { ServicesComponent } from './services/services.component';
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'services', component: ServicesComponent },
       { path: 'messages', component: MessagesComponent },
+      { path: 'subscriptions', component: SubscriptionsComponent }
     ])
   ],
   providers: [],

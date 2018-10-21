@@ -29,7 +29,18 @@ namespace MQTTServer.Core.Controllers
         [HttpGet("Version")]
         public string GetVersion()
         {
-            return typeof(DiagController).Assembly.GetName().Version.ToString();
+            var assembly = typeof(DiagController).Assembly;
+            var assemblyName = assembly.GetName().Name;
+            var gitVersionInformationType = assembly.GetType("GitVersionInformation");
+            var versionField = gitVersionInformationType?.GetField("FullSemVer");
+            
+            return versionField?.GetValue(null)?.ToString();
+        }
+
+        [HttpGet("Subscriptions")]
+        public ServiceSubscriptions[] GetSubscriptions()
+        {
+            return _model.GetSubscriptions();
         }
     }
 }

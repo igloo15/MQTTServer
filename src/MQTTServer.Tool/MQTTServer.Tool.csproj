@@ -1,12 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <AssemblyName>Igloo15.MQTTServer.Tool</AssemblyName>
+    <AssemblyName>MqttServer.Tool</AssemblyName>
     <AssemblyTitle>mqttserver</AssemblyTitle>
-    <RootNamespace>Igloo15.MQTTServer.Tool</RootNamespace>
-    <BaseOutputPath>$(MSBuildProjectFullPath)\..\..\..\dist\MQTTServer.Tool</BaseOutputPath>
+    <RootNamespace>MqttServer.Tool</RootNamespace>
+    <BaseOutputPath>$(MSBuildProjectFullPath)\..\..\..\dist\MqttServer.Tool</BaseOutputPath>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
@@ -16,32 +16,22 @@
     <ToolCommandName>dotnet-mqttserver</ToolCommandName>
     <IsPackable>true</IsPackable>
     <PackageVersion>$(Version)</PackageVersion>
-    <Title>Igloo15.MQTTServer.Tool</Title>
+    <Title>igloo15.MqttServer.Tool</Title>
     <Authors>Igloo15</Authors>
     <Description>dotnet cli tool used to run a mqtt server</Description>
     <PackageProjectUrl>https://github.com/igloo15/MQTTServer</PackageProjectUrl>
     <PackageTags>mqttnet;mqttserver;server;dotnet;cli;tool;netcore</PackageTags>
     <RepositoryUrl>https://github.com/igloo15/MQTTServer.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <StartupObject>Igloo15.MQTTServer.Tool.Program</StartupObject>
+    <StartupObject>MqttServer.Tool.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.1.1" />
-    <PackageReference Include="MQTTNet" Version="2.8.4" />
     <PackageReference Include="CommandLineParser" Version="2.3.65" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="mqttserver.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\MQTTServer.Core\MQTTServer.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,31 +1,38 @@
 <h1>Service List</h1>
-
 <p>A list of connected services</p>
-
+<hr />
 <p *ngIf="!services"><em>Loading...</em></p>
-<button (click)="RefreshData()" *ngIf="services">Fetch Data</button>
+<label *ngIf="services">
+  Auto Refresh
+  <input type="checkbox" [(ngModel)]="alive">
+</label>
+<label *ngIf="services">
+  Interval
+  <input type="number" [(ngModel)]="interval">
+</label>
+<br />
+<hr />
 <table class='table' *ngIf="services">
   <thead>
     <tr>
-      <th style="width: 12%">Name</th>
-      <th style="width: 12%">Connected</th>
-      <th style="width: 12%">End Point</th>
-      <th style="width: 50%">Subscription</th>
+      <th>Name</th>
+      <th>End Point</th>
+      <th>Connected</th>
+      <th>Protocol</th>
+      <th>Time Since Last Message(s)</th>
+      <th>Time Since Last Keep Alive(s)</th>
+      <th>Pending Messages</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let service of services">
-      <td style="width: 12%">{{ service.name }}</td>
-      <td style="width: 12%">{{ service.connected }}</td>
-      <td style="width: 12%">{{ service.endPoint }}</td>
-      <td style="width: 50%">
-        <table class="table" *ngIf="service.subscriptions">
-          <tr *ngFor="let sub of service.subscriptions">
-            <td>{{sub}}</td>
-          </tr>
-        </table>
-      </td>
-      
+      <td>{{ service.clientId }}</td>
+      <td>{{ service.endpoint }}</td>
+      <td>{{ service.isConnected }}</td>
+      <td>{{ service.protocolVersion }}</td>
+      <td>{{ service.timeSinceLastMessage }}</td>
+      <td>{{ service.timeSinceLastKeepAlive }}</td>
+      <td>{{ service.pendingMessages }}</td>
     </tr>
   </tbody>
 </table>

@@ -2,7 +2,16 @@
 <p>This server shows all the clients being connected to the server</p>
 <hr />
 <p *ngIf="!diags"><em>Loading...</em></p>
-
+<label *ngIf="diags">
+  Auto Refresh
+  <input type="checkbox" [(ngModel)]="alive">
+</label>
+<label *ngIf="diags">
+  Interval
+  <input type="number" [(ngModel)]="interval">
+</label>
+<br />
+<hr />
 <div class="panel panel-primary" style="width:45%;float:left;margin:10px" *ngFor="let diag of diags">
   <div class="panel-heading">{{diag.name}}</div>
   <div class="panel-body">{{diag.value}}</div>

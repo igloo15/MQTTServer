@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using MQTTnet.Server;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,10 +14,11 @@ namespace MQTTServer.Core
 
         private const string DateFormat = "MM/dd h:mm:ss tt";
 
-        private Dictionary<string, Service> _services = new Dictionary<string, Service>();
+        private Dictionary<string, ServiceSubscriptions> _services = new Dictionary<string, ServiceSubscriptions>();
         private Queue<Message> _messages = new Queue<Message>();
         private int _bufferLimit = 100;
         private ILogger _logger;
+        private IMqttServer _server;
 
         private Diagnostics _diagMessage = new Diagnostics();
 
@@ -26,41 +28,47 @@ namespace MQTTServer.Core
             _bufferLimit = config.GetValue<int>("WebServer:Buffer");
         }
 
-        public IEnumerable<Service> GetServices()
+        public IEnumerable<ServiceStatus> GetServices()
         {
-            return _services.Values;
+            return _server.GetClientSessionsStatusAsync().ContinueWith(t =>
+            {
+                return t.Result.Select(s => new ServiceStatus
+                {
+                    ClientId = s.ClientId,
+                    Endpoint = s.Endpoint,
+                    IsConnected = s.IsConnected,
+                    ProtocolVersion = s.ProtocolVersion.ToString(),
+                    TimeSinceLastMessage = (int)s.LastNonKeepAlivePacketReceived.TotalSeconds,
+                    TimeSinceLastKeepAlive = (int)s.LastPacketReceived.TotalSeconds,
+                    PendingMessages = s.PendingApplicationMessagesCount
+                });
+            }).Result;
         }
 
-        public MqttModel AddService(string name, string endpoint)
+        public ServiceSubscriptions GetService(string name)
         {
-            if(!_services.ContainsKey(name))
-            {
-                _services.Add(name, new Service { Name = name, Connected = DateTime.Now.ToString(DateFormat), EndPoint = endpoint });
-                _logger.LogDebug("Service {serviceName} added", name);
-            }
-            else
-            {
-                _logger.LogWarning("Service {serviceName} already exists can't be added again", name);
-            }
-
-            return this;
-        }
-
-        public Service GetService(string name)
-        {
-            if (_services.TryGetValue(name, out Service returnValue))
+            if (_services.TryGetValue(name, out ServiceSubscriptions returnValue))
                 return returnValue;
 
-            return null;
+            var service = new ServiceSubscriptions { Name = name };
+
+            _services.Add(name, service);
+
+            return service;
+        }
+
+        internal void SetServer(IMqttServer server)
+        {
+            _server = server;
         }
 
         public MqttModel RemoveService(string name)
         {
             _services.Remove(name);
-            
+
             return this;
         }
-        
+
         public MqttModel AddMessage(string topic, string service)
         {
             _messages.Enqueue(new Message
@@ -69,14 +77,11 @@ namespace MQTTServer.Core
                 ServiceName = service,
                 Time = DateTime.Now.ToString(DateFormat)
             });
-
             _diagMessage.NumMessages++;
-
             if(_messages.Count > _bufferLimit)
             {
                 _messages.Dequeue();
             }
-
             return this;
         }
 
@@ -85,12 +90,16 @@ namespace MQTTServer.Core
             return _messages.ToArray();
         }
 
-        
+        public ServiceSubscriptions[] GetSubscriptions()
+        {
+            return _services.Values.ToArray();
+        }
+
         private DateTime _startTime = DateTime.Now;
 
         public Diagnostics GetDiagnostics()
         {
-            _diagMessage.NumClients = _services.Count;
+            _diagMessage.NumClients = GetServices().Count();
             _diagMessage.NumSubscriptions = _services.Values.SelectMany(s => s.Subscriptions).Distinct().Count();
 
             double totalMinutes = (DateTime.Now - _startTime).TotalMinutes;
@@ -100,7 +109,7 @@ namespace MQTTServer.Core
                 _diagMessage.MessagesPerMinute = (int)(_diagMessage.NumMessages / totalMinutes);
                 _diagMessage.MinutesSinceStart = Math.Round(totalMinutes, 2);
             }
-                
+
             
             return _diagMessage;
         }
@@ -151,19 +160,26 @@ namespace MQTTServer.Core
 
     }
 
-    public class Service
+    public class ServiceStatus
+    {
+        public string ClientId { get; set; }
+        public string Endpoint { get; set; }
+        public bool IsConnected { get; set; }
+        public string ProtocolVersion { get; set; }
+        public int TimeSinceLastMessage { get; set; }
+        public int TimeSinceLastKeepAlive { get; set; }
+        public int PendingMessages { get; set; }
+    }
+
+    public class ServiceSubscriptions
     {
         private List<string> _subscriptions = new List<string>();
 
         public string Name { get; set; }
 
-        public string Connected { get; set; }
-
-        public string EndPoint { get; set; }
-
         public IEnumerable<string> Subscriptions { get => _subscriptions; }
 
-        public Service AddSubscription(string subscription)
+        public ServiceSubscriptions AddSubscription(string subscription)
         {
             if(!_subscriptions.Any(s => s == subscription))
             {

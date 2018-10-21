@@ -1,15 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Timers;
-using System.Linq;
 using MQTTnet.AspNetCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.FileProviders;
 
 namespace MQTTServer.Core
 {
@@ -38,23 +34,15 @@ namespace MQTTServer.Core
             //this adds a hosted mqtt server to the services
             services.AddHostedMqttServer(MqttServerUtility.BuildOptions(_options.Server, _factory, _interceptors).Build());
 
-            //this adds tcp server support based on System.Net.Socket
-            services.AddMqttTcpServerAdapter();
+            services.AddMqttConnectionHandler();
 
             //this adds websocket support
-            services.AddMqttWebSocketServerAdapter();
+            if (_options.Server.UseWebSocket)
+                services.AddMqttWebSocketServerAdapter();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
-            // In production, the Angular files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/dist";
-            });
         }
-
-        private Timer _timer = new Timer(2000);
-
+        
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
@@ -65,13 +53,16 @@ namespace MQTTServer.Core
             else
             {
                 app.UseExceptionHandler("/Error");
-                app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.UseSpaStaticFiles();
+            if (_options.Server.UseWebSocket)
+                app.UseMqttEndpoint();
 
+            app.UseMqttServer(s => _interceptors.SetServer(s));
+
+           
+            app.UseStaticFiles();
+            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -79,20 +70,12 @@ namespace MQTTServer.Core
                     template: "{controller}/{action=Index}/{id?}");
             });
 
-            app.UseSpa(spa =>
+            app.UseMiddleware<EmbeddedFileMiddleware>("/index.html", $"{MqttCore.MqttEmbeddedBase}.index.html");
+            app.UseFileServer(new FileServerOptions
             {
-                // To learn more about options for serving an Angular SPA from ASP.NET Core,
-                // see https://go.microsoft.com/fwlink/?linkid=864501
-
-                spa.Options.SourcePath = "ClientApp";
-
-                //if (env.IsDevelopment())
-                //{
-                //    spa.UseAngularCliServer(npmScript: "start");
-                //}
+                RequestPath = new Microsoft.AspNetCore.Http.PathString(),
+                FileProvider = new EmbeddedFileProvider(typeof(Startup).Assembly, $"{MqttCore.MqttEmbeddedBase}")
             });
-
-            //app.UseMqttEndpoint();
         }
 
     }

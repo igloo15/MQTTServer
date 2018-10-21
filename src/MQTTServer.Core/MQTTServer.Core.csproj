@@ -4,28 +4,44 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
-    <IsPackable>false</IsPackable>
     <SpaRoot>ClientApp\</SpaRoot>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
     <BaseOutputPath>$(MSBuildProjectFullPath)\..\..\..\dist\MQTTServer.Core</BaseOutputPath>
-    <!-- Set this to true if you enable server-side prerendering -->
-    <BuildServerSideRenderer>false</BuildServerSideRenderer>
     <OutputType>Library</OutputType>
     <WriteVersionInfoToBuildLog>true</WriteVersionInfoToBuildLog>
     <UpdateVersionProperties>true</UpdateVersionProperties>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <PackageVersion>$(Version)</PackageVersion>
+    <Title>igloo15.MqttServer.Core</Title>
+    <Authors>Igloo15</Authors>
+    <Description>net standard library that can host a MqttBroker with a the MqttNet Library. Adds diagnostic website and easy to use commandline, logging, and configuration</Description>
+    <PackageProjectUrl>https://github.com/igloo15/MQTTServer</PackageProjectUrl>
+    <PackageTags>mqttnet;mqttserver;server;dotnet;netstandard;diagnostics</PackageTags>
+    <RepositoryUrl>https://github.com/igloo15/MQTTServer.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ClientApp\dist\**" />
+    <Content Remove="ClientApp\dist\**" />
+    <EmbeddedResource Remove="ClientApp\dist\**" />
+    <None Remove="ClientApp\dist\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.3.0" />
     <PackageReference Include="GitVersionTask" Version="4.0.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="igloo15.Serilog.Microsoft.Logger" Version="0.2.1" />
+    <PackageReference Include="igloo15.Serilog.Microsoft.Logger" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.1.4" />
-    <PackageReference Include="Microsoft.AspNetCore.HttpsPolicy" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.1.3" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="2.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="2.1.1" />
     <PackageReference Include="MQTTnet" Version="2.8.4" />
     <PackageReference Include="MQTTnet.AspNetCore" Version="2.8.4" />
   </ItemGroup>
@@ -33,13 +49,12 @@
   
 
   <ItemGroup>
-    <Content Update="appsettings.json">
+    <Content Update="mqttserver.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="$(SpaRoot)dist\**" CopyToOutputDirectory="PreserveNewest" Link="ClientApp\dist\%(RecursiveDir)\%(Filename)%(Extension)" />
   </ItemGroup>
 
-  <Target Name="BuildWeb" BeforeTargets="GetCopyToOutputDirectoryItems">
+  <Target Name="BuildWeb" BeforeTargets="CollectPackageReferences">
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- --prod" Condition="$(Configuration) == 'Release'" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" Condition="$(Configuration) == 'Debug'" />
@@ -47,8 +62,8 @@
 
     <ItemGroup>
       <!-- Don't publish the SPA source files, but do show them in the project files list -->
-      <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
-      <EmbeddedResource Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+      <!--<None Include="$(SpaRoot)dist\**\*" CopyToOutputDirectory="PreserveNewest" />-->
+      <EmbeddedResource Include="$(SpaRoot)dist\**\*" />
     </ItemGroup>
 
   </Target>

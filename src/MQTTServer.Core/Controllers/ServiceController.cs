@@ -19,10 +19,9 @@ namespace MQTTServer.Core.Controllers
         }
 
         // GET: /<controller>/
-        public IEnumerable<Service> Index()
+        public IEnumerable<ServiceStatus> Index()
         {
             return _model?.GetServices();
         }
-
     }
 }

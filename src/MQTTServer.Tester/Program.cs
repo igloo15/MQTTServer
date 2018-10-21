@@ -6,14 +6,12 @@ using MQTTServer.Core;
 using System;
 using System.Threading.Tasks;
 
-namespace MQTTServer.Tester
+namespace MqttServer.Tester
 {
     class Program
     {
         static void Main(string[] args)
         {
-
-
             Console.WriteLine("Hello World!");
 
             MqttCore core = new MqttCore(new ServerOptions {
@@ -21,10 +19,13 @@ namespace MQTTServer.Tester
                 ShowSubscriptions = true,
                 ShowClientConnections = true,
                 ShowMessages = true,
-                StartWebServer = true
+                UseKestrelServer = true,
+                UseWebSocket = true,
+                StartDiagWebServer = true,
+                LogFiles = true
             });
 
-            core.Start();
+            core.StartAsync();
 
 
 

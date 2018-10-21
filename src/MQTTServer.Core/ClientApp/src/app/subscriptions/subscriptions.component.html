@@ -1,0 +1,22 @@
+<h1>Service List</h1>
+<p>A list of connected services</p>
+<hr />
+<p *ngIf="!services"><em>Loading...</em></p>
+<label *ngIf="services">
+  Auto Refresh
+  <input type="checkbox" [(ngModel)]="alive">
+</label>
+<label *ngIf="services">
+  Interval
+  <input type="number" [(ngModel)]="interval">
+</label>
+<br />
+<hr />
+<div class="panel panel-default" *ngFor="let service of services">
+  <!-- Default panel contents -->
+  <div class="panel-heading">{{ service.name }}</div>
+  <!-- List group -->
+  <ul class="list-group" >
+    <li class="list-group-item" *ngFor="let subscription of service.subscriptions">{{ subscription }}</li>
+  </ul>
+</div>

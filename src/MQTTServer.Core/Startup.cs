@@ -31,14 +31,18 @@ namespace MQTTServer.Core
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton(_model);
-            //this adds a hosted mqtt server to the services
-            services.AddHostedMqttServer(MqttServerUtility.BuildOptions(_options.Server, _factory, _interceptors).Build());
+            services.AddSingleton(_interceptors);
+            if (_options.Server.UseKestrelServer)
+            {
+                //this adds a hosted mqtt server to the services
+                services.AddHostedMqttServer(MqttServerUtility.BuildOptions(_options.Server, _factory, _interceptors).Build());
 
-            services.AddMqttConnectionHandler();
+                services.AddMqttConnectionHandler();
 
-            //this adds websocket support
-            if (_options.Server.UseWebSocket)
-                services.AddMqttWebSocketServerAdapter();
+                //this adds websocket support
+                if (_options.Server.UseWebSocket)
+                    services.AddMqttWebSocketServerAdapter();
+            }
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
@@ -55,10 +59,14 @@ namespace MQTTServer.Core
                 app.UseExceptionHandler("/Error");
             }
 
-            if (_options.Server.UseWebSocket)
-                app.UseMqttEndpoint();
+            if (_options.Server.UseKestrelServer)
+            {
 
-            app.UseMqttServer(s => _interceptors.SetServer(s));
+                if (_options.Server.UseWebSocket)
+                    app.UseMqttEndpoint();
+
+                app.UseMqttServer(s => _interceptors.SetServer(s));
+            }
 
             app.UseStaticFiles();
 

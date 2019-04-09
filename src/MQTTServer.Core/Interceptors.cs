@@ -1,7 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
+using MQTTnet;
 using MQTTnet.Server;
 using System;
 using System.Collections.Generic;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Text;
 
 namespace MQTTServer.Core
@@ -15,6 +18,7 @@ namespace MQTTServer.Core
         private MqttModel _model;
         private IMqttServer _server;
         private MqttSettings _settings;
+        private IObservable<MqttApplicationMessageReceivedEventArgs> _messageStream;
 
         public Interceptors(ILoggerFactory factory, MqttModel model, MqttSettings settings)
         {
@@ -36,9 +40,15 @@ namespace MQTTServer.Core
         public void SetServer(IMqttServer server)
         {
             _server = server;
+            if (_settings.Server.ShowMessages || _settings.Server.StartDiagWebServer)
+            {
+                _messageStream = Observable
+                    .FromEventPattern<MqttApplicationMessageReceivedEventArgs>(h => _server.ApplicationMessageReceived += h, h => _server.ApplicationMessageReceived -= h)
+                    .Select(e => e.EventArgs);
 
-            if(_settings.Server.ShowMessages || _settings.Server.StartDiagWebServer)
-                _server.ApplicationMessageReceived += MessageReceived;
+                _messageStream.Subscribe(MessageReceived);
+            }
+                
 
             if (_settings.Server.ShowClientConnections || _settings.Server.StartDiagWebServer)
             {
@@ -101,24 +111,23 @@ namespace MQTTServer.Core
             _model?.AddService(e.ClientId);
         }
 
-        private void MessageReceived(object sender, MQTTnet.MqttApplicationMessageReceivedEventArgs e)
+        private void MessageReceived(MqttApplicationMessageReceivedEventArgs next)
         {
-            _messageLogger?.LogInformation("Client {ClientId} sent message to Topic {Topic}", e.ClientId, e.ApplicationMessage.Topic);
+            _messageLogger?.LogInformation("Client {ClientId} sent message to Topic {Topic}", next.ClientId, next.ApplicationMessage.Topic);
             string content = null;
             if (_settings.Server.ShowMessageContent)
             {
                 try
                 {
-                    content = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
+                    content = Encoding.UTF8.GetString(next.ApplicationMessage.Payload);
                 }
                 catch (Exception)
                 {
 
                 }
             }
-                
-            
-            _model?.AddMessage(e.ApplicationMessage.Topic, e.ClientId, content);
+
+            _model?.AddMessage(next.ApplicationMessage.Topic, next.ClientId, content);
         }
 
         public void SubscriptionInterceptor(MqttSubscriptionInterceptorContext context)

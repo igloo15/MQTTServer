@@ -53,9 +53,15 @@ namespace MQTTServer.Core
 
         public IEnumerable<ServiceStatus> GetServices()
         {
-            return _server.GetClientSessionsStatusAsync()
-                .ContinueWith(t => t.Result.Select(s => GetService(s.ClientId)?.Status.Update(s)).Where(s => s != null))
-                .ContinueWith(t => _services.Values.Select(s => s.Status)).Result;
+            var results = _server.GetClientSessionsStatusAsync().Result;
+
+            foreach(var result in results)
+            {
+                var service = GetService(result.ClientId);
+                service?.Status.Update(result);
+            }
+            
+            return _services.Values.Select(s => s.Status);
         }
 
         public Service GetService(string name)
